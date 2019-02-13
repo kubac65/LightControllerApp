@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightControl", "LightControl\LightControl.csproj", "{D2D4EC42-DD87-4DAD-9F93-37126B99502B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightControl.Network", "LightControl.Network\LightControl.Network.csproj", "{47023844-3272-41B3-AE25-3BEBE1C68B1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,10 @@ Global
 		{D2D4EC42-DD87-4DAD-9F93-37126B99502B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2D4EC42-DD87-4DAD-9F93-37126B99502B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2D4EC42-DD87-4DAD-9F93-37126B99502B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{47023844-3272-41B3-AE25-3BEBE1C68B1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47023844-3272-41B3-AE25-3BEBE1C68B1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47023844-3272-41B3-AE25-3BEBE1C68B1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47023844-3272-41B3-AE25-3BEBE1C68B1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
