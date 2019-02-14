@@ -7,8 +7,10 @@ namespace LightControl.Models
 {
     internal class DeviceModel
     {
-        public string Name;
-        public string IPAddress;
-        public string Mac;
+        public string Name { get; set; }
+
+        public string IPAddress { get; set; }
+
+        public string Mac { get; set; }
     }
 }

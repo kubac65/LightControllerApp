@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightControl.Network", "Lig
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6447DC46-C514-41FD-B84D-6A690B1B562E}"
 	ProjectSection(SolutionItems) = preProject
-		RuleSet1.ruleset = RuleSet1.ruleset
+		CodeAnalysis.ruleset = CodeAnalysis.ruleset
 		stylecop.json = stylecop.json
 	EndProjectSection
 EndProject

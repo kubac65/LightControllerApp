@@ -13,36 +13,36 @@ namespace LightControl.Network
 
     public class DiscoveryService : IDisposable
     {
-        private readonly int port;
-        private readonly UdpClient udp = new UdpClient();
-        private IPEndPoint src;
+        private readonly int _port;
+        private readonly UdpClient _udp = new UdpClient();
+        private IPEndPoint _src;
 
         public event DeviceDiscovered DeviceDiscovered;
 
         public DiscoveryService(int port)
         {
-            this.port = port;
-            src = new IPEndPoint(IPAddress.Any, port);
+            this._port = port;
+            _src = new IPEndPoint(IPAddress.Any, port);
 
-            udp.Client.Bind(src);
+            _udp.Client.Bind(_src);
         }
 
         public void BeginReceive()
         {
-            udp.BeginReceive(new AsyncCallback(this.ReceiveMessage), this);
+            _udp.BeginReceive(new AsyncCallback(ReceiveMessage), this);
         }
 
         public void Dispose()
         {
-            udp.Dispose();
+            _udp.Dispose();
         }
 
         private void ReceiveMessage(IAsyncResult ar)
         {
-            byte[] receivedMessage = udp.EndReceive(ar, ref src);
+            byte[] receivedMessage = _udp.EndReceive(ar, ref _src);
             DeviceDiscovered?.Invoke(this, new DeviceDiscoveredEventArgs()
             {
-                Address = src.Address,
+                Address = _src.Address,
                 Mac = receivedMessage
             });
 

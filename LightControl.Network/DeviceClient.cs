@@ -12,21 +12,13 @@ namespace LightControl.Network
 
     internal class DeviceClient : IDisposable
     {
-        private TcpClient client;
+        private TcpClient _client;
 
         public DeviceClient(IPAddress address, int port)
         {
-            client = new TcpClient();
-            client.Connect(new IPEndPoint(address, port));
+            _client = new TcpClient();
+            _client.Connect(new IPEndPoint(address, port));
         }
-
-        //public string Echo(string value)
-        //{
-        //    using (var stream = new MemoryStream(client.GetStream()))
-        //    {
-
-        //    }
-        //}
 
         public void Dispose()
         {
