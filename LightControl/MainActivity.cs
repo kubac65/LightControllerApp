@@ -15,6 +15,9 @@ namespace LightControl
     using System.Collections.Generic;
     using System.Text;
 
+    /// <summary>
+    /// Main activity displaying the lsit of discovered devices
+    /// </summary>
     [Activity(Label = "@string/app_name", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
@@ -26,6 +29,7 @@ namespace LightControl
         private DeviceListAdapter _adapter;
         private ListView _deviceListView;
 
+        /// <inheritdoc/>
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
