@@ -6,12 +6,14 @@
 namespace LightControl.Adapters
 {
     using System.Collections.Generic;
+    using System.Net;
     using Android.Content;
     using Android.Views;
     using Android.Widget;
     using LightControl.Models;
+    using LightControl.Network;
 
-    internal class DeviceListAdapter : ArrayAdapter<DeviceModel>
+    internal class DeviceListAdapter : ArrayAdapter<DeviceModel>, View.IOnClickListener
     {
         public DeviceListAdapter(Context context, int textViewResourceId, IList<DeviceModel> objects)
             : base(context, textViewResourceId, objects)
@@ -31,7 +33,19 @@ namespace LightControl.Adapters
             deviceIp.Text = o.IPAddress;
             deviceMac.Text = o.Mac;
 
+            convertView.SetOnClickListener(this);
+
             return convertView;
+        }
+
+        /// <inheritdoc/>
+        void View.IOnClickListener.OnClick(View v)
+        {
+            var ip = v.FindViewById<TextView>(Resource.Id.device_ip_address);
+
+            var ipAddr = IPAddress.Parse(ip.Text);
+            var d = new DeviceClient(ipAddr, DefaultConfiguration.ConnectionPort);
+            d.SendEcho("test");
         }
     }
 }
