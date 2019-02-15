@@ -69,10 +69,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json">
+    <AdditionalFiles Include="$(SolutionDir)\stylecop.json">
       <Link>stylecop.json</Link>
     </AdditionalFiles>
-    <None Include="..\CodeAnalysis.ruleset">
+    <None Include="$(SolutionDir)\CodeAnalysis.ruleset">
       <Link>CodeAnalysis.ruleset</Link>
     </None>
     <None Include="Resources\AboutResources.txt" />

@@ -4017,11 +4017,11 @@ namespace LightControl
 			// aapt resource value: 0x7f080095
 			public const int design_navigation_view = 2131230869;
 			
-			// aapt resource value: 0x7f08008b
-			public const int deviceList = 2131230859;
-			
 			// aapt resource value: 0x7f08009b
 			public const int device_ip_address = 2131230875;
+			
+			// aapt resource value: 0x7f08008b
+			public const int device_list = 2131230859;
 			
 			// aapt resource value: 0x7f08009c
 			public const int device_mac_address = 2131230876;

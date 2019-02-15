@@ -40,9 +40,9 @@ namespace LightControl
             _ds.DeviceDiscovered += Ds_DeviceDiscovered;
             _ds.BeginReceive();
 
-            _deviceListView = FindViewById<ListView>(Resource.Id.deviceList);
+            _deviceListView = FindViewById<ListView>(Resource.Id.device_list);
 
-            _adapter = new DeviceListAdapter(this, Resource.Id.deviceList, _devices);
+            _adapter = new DeviceListAdapter(this, Resource.Id.device_list, _devices);
             _deviceListView.Adapter = _adapter;
         }
 
