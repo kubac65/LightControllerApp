@@ -117,15 +117,15 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LightControl.Network\LightControl.Network.csproj">
-      <Project>{47023844-3272-41b3-ae25-3bebe1c68b1d}</Project>
-      <Name>LightControl.Network</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\device_list_item.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LightControl.Network\LightControl.Network.csproj">
+      <Project>{747D7202-FA49-4CB7-A15E-E3E15F38E3CA}</Project>
+      <Name>LightControl.Network</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
