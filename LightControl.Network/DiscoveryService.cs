@@ -8,22 +8,18 @@ namespace LightControl.Network
     using System;
     using System.Net;
     using System.Net.Sockets;
-
-    /// <summary>
-    /// Delegate definition used for <see cref="DiscoveryService.DeviceDiscovered"/> event.
-    /// </summary>
-    /// <param name="sender">Event sender</param>
-    /// <param name="eventArgs">Event arguments</param>
-    public delegate void DeviceDiscovered(object sender, DeviceDiscoveredEventArgs eventArgs);
+    using System.Threading;
 
     /// <summary>
     /// <see cref="DiscoveryService "/> discovers control devices connected to the same network.
     /// </summary>
-    public class DiscoveryService : IDisposable
+    internal class DiscoveryService : IDisposable
     {
         private readonly int _port;
         private readonly UdpClient _udp = new UdpClient();
         private IPEndPoint _src;
+        private bool _listen = false;
+        private Thread _worker;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DiscoveryService"/> class.
@@ -33,35 +29,52 @@ namespace LightControl.Network
         {
             _port = port;
             _src = new IPEndPoint(IPAddress.Any, port);
-
             _udp.Client.Bind(_src);
         }
 
         /// <summary>
         /// <see cref="DeviceDiscovered"/> event raised every time the device discovery message is received.
         /// </summary>
-        public event DeviceDiscovered DeviceDiscovered;
+        public event EventHandler<DeviceDiscoveredEventArgs> DeviceDiscovered;
 
         /// <summary>
-        /// Starts listening to incoming messages.
+        /// Starts listening for device broadcasts.
         /// </summary>
-        public void BeginReceive()
+        public void Start()
         {
-            _udp.BeginReceive(new AsyncCallback(ReceiveMessage), this);
+            if (!_listen)
+            {
+                _worker = new Thread(() =>
+                {
+                    while (_listen)
+                    {
+                        byte[] receivedMessage = _udp.Receive(ref _src);
+                        var eventArgs = new DeviceDiscoveredEventArgs(_src.Address, receivedMessage);
+                        DeviceDiscovered?.Invoke(this, eventArgs);
+                    }
+                });
+                _worker.Start();
+                _listen = true;
+            }
+            else
+            {
+                throw new InvalidOperationException("Discovery service is already started");
+            }
+        }
+
+        /// <summary>
+        /// Stops listening to device broadcasts.
+        /// </summary>
+        public void Stop()
+        {
+            _listen = false;
+            _worker.Abort(); // TODO: This may not be necessary
         }
 
         /// <inheritdoc/>
         public void Dispose()
         {
             _udp.Dispose();
-        }
-
-        private void ReceiveMessage(IAsyncResult ar)
-        {
-            byte[] receivedMessage = _udp.EndReceive(ar, ref _src);
-            var eventArgs = new DeviceDiscoveredEventArgs(_src.Address, receivedMessage);
-            DeviceDiscovered?.Invoke(this, eventArgs);
-            BeginReceive();
         }
     }
 }

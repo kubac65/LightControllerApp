@@ -11,13 +11,23 @@ namespace LightControl.Network
     public static class DefaultConfiguration
     {
         /// <summary>
-        /// Gets port used for broadcasting messages
+        /// Gets port used for broadcasting messages.
         /// </summary>
         public static int BroadcastPort => 54545;
 
         /// <summary>
-        /// Gets port used by control devices to listen for incoming connections
+        /// Gets port used by control devices to listen for incoming connections.
         /// </summary>
         public static int ConnectionPort => 54546;
+
+        /// <summary>
+        /// Gets device wachdog period used for monitoring devices.
+        /// </summary>
+        public static int WatchdogPeriod => 1000;
+
+        /// <summary>
+        /// Gets device timeout time.
+        /// </summary>
+        public static int DeviceTimeout => 4000; // Since we're using UDP we have to allow for lost packets
     }
 }
