@@ -64,7 +64,6 @@
   <ItemGroup>
     <Compile Include="Adapters\DeviceListAdapter.cs" />
     <Compile Include="MainActivity.cs" />
-    <Compile Include="Models\DeviceModel.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -126,6 +125,9 @@
       <Project>{747D7202-FA49-4CB7-A15E-E3E15F38E3CA}</Project>
       <Name>LightControl.Network</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

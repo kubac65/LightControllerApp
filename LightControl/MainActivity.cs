@@ -10,10 +10,7 @@ namespace LightControl
     using Android.Support.V7.App;
     using Android.Widget;
     using LightControl.Adapters;
-    using LightControl.Models;
-    using LightControl.Network;
-    using System.Collections.Generic;
-    using System.Text;
+    using LightControl.Network.DeviceManagement;
 
     /// <summary>
     /// Main activity displaying the lsit of discovered devices
@@ -21,13 +18,8 @@ namespace LightControl
     [Activity(Label = "@string/app_name", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
-        private readonly List<DeviceModel> _devices = new List<DeviceModel>();
-        private DiscoveryService _ds = new DiscoveryService(DefaultConfiguration.BroadcastPort);
-
-        private List<string> _ips = new List<string>();
-
+        private DeviceManager _ds;
         private DeviceListAdapter _adapter;
-        private ListView _deviceListView;
 
         /// <inheritdoc/>
         protected override void OnCreate(Bundle savedInstanceState)
@@ -37,34 +29,41 @@ namespace LightControl
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
 
+            _ds = new DeviceManager();
             _ds.DeviceDiscovered += Ds_DeviceDiscovered;
-            _ds.BeginReceive();
+            _ds.DeviceAvailable += Ds_DeviceAvailable;
+            _ds.DeviceNotAvailable += Ds_DeviceNotAvailable;
 
-            _deviceListView = FindViewById<ListView>(Resource.Id.device_list);
-
-            _adapter = new DeviceListAdapter(this, Resource.Id.device_list, _devices);
-            _deviceListView.Adapter = _adapter;
+            var deviceListView = FindViewById<ListView>(Resource.Id.device_list);
+            _adapter = new DeviceListAdapter(this, Resource.Id.device_list);
+            deviceListView.Adapter = _adapter;
         }
 
-        private void Ds_DeviceDiscovered(object sender, DeviceDiscoveredEventArgs eventArgs)
+        private void Ds_DeviceDiscovered(object sender, Device device)
         {
-            string receiveString = Encoding.ASCII.GetString(eventArgs.Mac);
-            if (_ips.Contains(eventArgs.Address.ToString()))
-            {
-                return;
-            }
-
-            _ips.Add(eventArgs.Address.ToString());
-
             RunOnUiThread(() =>
             {
-                _adapter.Add(new DeviceModel
-                {
-                    Name = eventArgs.Address.ToString(),
-                    IPAddress = eventArgs.Address.ToString(),
-                    Mac = receiveString
-                });
+                _adapter.Add(device);
                 _adapter.NotifyDataSetChanged();
+                Toast.MakeText(this, "Device discovered", ToastLength.Long).Show();
+            });
+        }
+
+        private void Ds_DeviceNotAvailable(object sender, Device device)
+        {
+            RunOnUiThread(() =>
+            {
+                _adapter.NotifyDataSetChanged();
+                Toast.MakeText(this, "Device not available", ToastLength.Long).Show();
+            });
+        }
+
+        private void Ds_DeviceAvailable(object sender, Device device)
+        {
+            RunOnUiThread(() =>
+            {
+                _adapter.NotifyDataSetChanged();
+                Toast.MakeText(this, "Device available", ToastLength.Long).Show();
             });
         }
     }

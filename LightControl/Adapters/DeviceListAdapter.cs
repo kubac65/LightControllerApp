@@ -5,47 +5,45 @@
 
 namespace LightControl.Adapters
 {
-    using System.Collections.Generic;
-    using System.Net;
     using Android.Content;
     using Android.Views;
     using Android.Widget;
-    using LightControl.Models;
-    using LightControl.Network;
+    using LightControl.Network.DeviceManagement;
+    using System.Linq;
 
-    internal class DeviceListAdapter : ArrayAdapter<DeviceModel>, View.IOnClickListener
+    /// <summary>
+    /// Adapts <see cref="Device"/> object to display them in the <see cref="ListView"/>.
+    /// </summary>
+    internal class DeviceListAdapter : ArrayAdapter<Device>
     {
-        public DeviceListAdapter(Context context, int textViewResourceId, IList<DeviceModel> objects)
-            : base(context, textViewResourceId, objects)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeviceListAdapter"/> class.
+        /// </summary>
+        /// <param name="context">Application context.</param>
+        /// <param name="textViewResourceId">Resource Id.</param>
+        public DeviceListAdapter(Context context, int textViewResourceId)
+            : base(context, textViewResourceId)
         {
-        }
-
-        public override View GetView(int position, View convertView, ViewGroup parent)
-        {
-            var o = GetItem(position);
-            var inflater = LayoutInflater.From(Context);
-            convertView = inflater.Inflate(Resource.Layout.device_list_item, parent, false);
-            var deviceName = convertView.FindViewById<TextView>(Resource.Id.device_name);
-            var deviceIp = convertView.FindViewById<TextView>(Resource.Id.device_ip_address);
-            var deviceMac = convertView.FindViewById<TextView>(Resource.Id.device_mac_address);
-
-            deviceName.Text = o.Name;
-            deviceIp.Text = o.IPAddress;
-            deviceMac.Text = o.Mac;
-
-            convertView.SetOnClickListener(this);
-
-            return convertView;
         }
 
         /// <inheritdoc/>
-        void View.IOnClickListener.OnClick(View v)
+        public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            var ip = v.FindViewById<TextView>(Resource.Id.device_ip_address);
+            var device = GetItem(position);
+            var inflater = LayoutInflater.From(Context);
+            convertView = convertView ?? inflater.Inflate(Resource.Layout.device_list_item, parent, false);
+            var deviceName = convertView.FindViewById<TextView>(Resource.Id.device_name);
+            var deviceIp = convertView.FindViewById<TextView>(Resource.Id.device_ip_address);
+            var deviceMac = convertView.FindViewById<TextView>(Resource.Id.device_mac_address);
+            var staus = convertView.FindViewById<TextView>(Resource.Id.device_status);
 
-            var ipAddr = IPAddress.Parse(ip.Text);
-            var d = new DeviceClient(ipAddr, DefaultConfiguration.ConnectionPort);
-            d.SendEcho("test");
+            deviceName.Text = device.Name;
+            deviceIp.Text = device.IPAddress.ToString();
+            deviceMac.Text = string.Join(":", device.Mac.GetAddressBytes().Select(b => b.ToString("X2")));
+            staus.Text = device.Available ? "Available" : "Not Available";
+            convertView.Click += (e, d) => { };
+
+            return convertView;
         }
     }
 }

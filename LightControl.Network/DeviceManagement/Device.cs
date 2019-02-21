@@ -7,20 +7,22 @@ namespace LightControl.Network.DeviceManagement
 {
     using System;
     using System.Net;
+    using System.Net.NetworkInformation;
 
+    /// <summary>
+    /// <see cref="Device"/> class provides abstraction for communicating with the end device.
+    /// </summary>
     public class Device
     {
         private readonly int _port;
-        private volatile bool _available;
-        private DateTime _lastSeen;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Device"/> class.
         /// </summary>
-        /// <param name="ipAddress"></param>
-        /// <param name="port"></param>
-        /// <param name="mac"></param>
-        public Device(IPAddress ipAddress, int port, byte[] mac)
+        /// <param name="ipAddress">IP address of the device.</param>
+        /// <param name="port">Port used for communication with the device.</param>
+        /// <param name="mac">MAC address of the device.</param>
+        public Device(IPAddress ipAddress, int port, PhysicalAddress mac)
         {
             IPAddress = ipAddress;
             _port = port;
@@ -35,7 +37,7 @@ namespace LightControl.Network.DeviceManagement
         /// <summary>
         /// Gets MAC address of this device.
         /// </summary>
-        public byte[] Mac { get; private set; }
+        public PhysicalAddress Mac { get; private set; }
 
         /// <summary>
         /// Gets or sets name of this device.
@@ -43,30 +45,13 @@ namespace LightControl.Network.DeviceManagement
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether this device is available.
+        /// Gets or sets a value indicating whether this device is available.
         /// </summary>
-        public bool Available { get => _available; internal set => _available = value; }
+        public bool Available { get; set; }
 
         /// <summary>
         /// Gets or sets
         /// </summary>
-        public DateTime LastSeen
-        {
-            get
-            {
-                lock (this)
-                {
-                    return _lastSeen;
-                }
-            }
-
-            set
-            {
-                lock (this)
-                {
-                    _lastSeen = value;
-                }
-            }
-        }
+        public DateTime LastSeen { get; set; }
     }
 }

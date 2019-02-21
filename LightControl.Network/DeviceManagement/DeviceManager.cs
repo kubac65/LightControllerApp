@@ -8,9 +8,9 @@ namespace LightControl.Network.DeviceManagement
     using LightControl.Network;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using System.Net;
+    using System.Net.NetworkInformation;
     using System.Timers;
 
     /// <summary>
@@ -64,11 +64,9 @@ namespace LightControl.Network.DeviceManagement
                 foreach (var d in _deviceLookup.Values.Where(d => d.Available))
                 {
                     var diff = currentTimestamp - d.LastSeen;
-
                     if (diff > TimeSpan.FromMilliseconds(DefaultConfiguration.DeviceTimeout))
                     {
                         d.Available = false;
-                        d.Name = diff.ToString();
                         DeviceNotAvailable?.Invoke(this, d);
                     }
                 }
@@ -85,7 +83,8 @@ namespace LightControl.Network.DeviceManagement
             {
                 if (!_deviceLookup.TryGetValue(eventArgs.Address, out Device d))
                 {
-                    d = new Device(eventArgs.Address, DefaultConfiguration.BroadcastPort, eventArgs.Mac)
+                    var mac = new PhysicalAddress(eventArgs.Mac);
+                    d = new Device(eventArgs.Address, DefaultConfiguration.BroadcastPort, mac)
                     {
                         Available = true,
                     };
