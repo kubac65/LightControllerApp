@@ -6,6 +6,7 @@
 namespace LightControl.Network
 {
     using System;
+    using System.Linq;
     using System.Net;
     using System.Net.Sockets;
     using System.Threading;
@@ -16,7 +17,7 @@ namespace LightControl.Network
     internal class DiscoveryService : IDisposable
     {
         private readonly int _port;
-        private readonly UdpClient _udp = new UdpClient();
+        private readonly Socket _socket;
         private IPEndPoint _src;
         private bool _listen = false;
         private Thread _worker;
@@ -27,9 +28,10 @@ namespace LightControl.Network
         /// <param name="port">Port used to listen for control devices</param>
         public DiscoveryService(int port)
         {
+            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _port = port;
             _src = new IPEndPoint(IPAddress.Any, port);
-            _udp.Client.Bind(_src);
+            _socket.Bind(_src);
         }
 
         /// <summary>
@@ -48,9 +50,19 @@ namespace LightControl.Network
                 {
                     while (_listen)
                     {
-                        byte[] receivedMessage = _udp.Receive(ref _src);
-                        var eventArgs = new DeviceDiscoveredEventArgs(_src.Address, receivedMessage);
-                        DeviceDiscovered?.Invoke(this, eventArgs);
+                        EndPoint remoteEndPoint = new IPEndPoint(IPAddress.None, 0);
+                        int bytes = _socket.Available;
+                        if (bytes >= 8)
+                        {
+                            // Read preamble and verify that it's correct
+                            byte[] message = new byte[8];
+                            _socket.ReceiveFrom(message, SocketFlags.None, ref remoteEndPoint);
+                            byte[] mac = message.Skip(2).ToArray();
+                            var eventArgs = new DeviceDiscoveredEventArgs(((IPEndPoint)remoteEndPoint).Address, mac);
+                            DeviceDiscovered?.Invoke(this, eventArgs);
+                        }
+
+                        Thread.Sleep(1);
                     }
                 });
                 _worker.Start();
@@ -74,7 +86,7 @@ namespace LightControl.Network
         /// <inheritdoc/>
         public void Dispose()
         {
-            _udp.Dispose();
+            _socket.Dispose();
         }
     }
 }

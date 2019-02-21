@@ -11,6 +11,7 @@ namespace LightControl.Network.DeviceManagement
     using System.Linq;
     using System.Net;
     using System.Net.NetworkInformation;
+    using System.Threading.Tasks;
     using System.Timers;
 
     /// <summary>
@@ -59,18 +60,21 @@ namespace LightControl.Network.DeviceManagement
         private void DeviceWatchdog_Elapsed(object sender, ElapsedEventArgs e)
         {
             var currentTimestamp = DateTime.Now;
-            lock (_deviceLookup)
+            Task.Factory.StartNew(() =>
             {
-                foreach (var d in _deviceLookup.Values.Where(d => d.Available))
+                lock (_deviceLookup)
                 {
-                    var diff = currentTimestamp - d.LastSeen;
-                    if (diff > TimeSpan.FromMilliseconds(DefaultConfiguration.DeviceTimeout))
+                    foreach (var d in _deviceLookup.Values.Where(d => d.Available))
                     {
-                        d.Available = false;
-                        DeviceNotAvailable?.Invoke(this, d);
+                        var diff = currentTimestamp - d.LastSeen;
+                        if (diff > TimeSpan.FromMilliseconds(DefaultConfiguration.DeviceTimeout))
+                        {
+                            d.Available = false;
+                            DeviceNotAvailable?.Invoke(this, d);
+                        }
                     }
                 }
-            }
+            });
         }
 
         private void DiscoveryService_DeviceDiscovered(object sender, DeviceDiscoveredEventArgs eventArgs)
@@ -78,28 +82,30 @@ namespace LightControl.Network.DeviceManagement
             // When discovery service receives broadcast check that we already have the device created.
             // If device exists, update it's LastSeen property. Otherwise add new device to the lookup
             var currentTimestamp = DateTime.UtcNow;
-
-            lock (_deviceLookup)
+            Task.Factory.StartNew(() =>
             {
-                if (!_deviceLookup.TryGetValue(eventArgs.Address, out Device d))
+                lock (_deviceLookup)
                 {
-                    var mac = new PhysicalAddress(eventArgs.Mac);
-                    d = new Device(eventArgs.Address, DefaultConfiguration.BroadcastPort, mac)
+                    if (!_deviceLookup.TryGetValue(eventArgs.Address, out Device d))
                     {
-                        Available = true,
-                    };
+                        var mac = new PhysicalAddress(eventArgs.Mac);
+                        d = new Device(eventArgs.Address, DefaultConfiguration.BroadcastPort, mac)
+                        {
+                            Available = true,
+                        };
 
-                    _deviceLookup.Add(eventArgs.Address, d);
-                    DeviceDiscovered?.Invoke(this, d); // NOTE: Event handlers are executed inside lock!!!
-                }
+                        _deviceLookup.Add(eventArgs.Address, d);
+                        DeviceDiscovered?.Invoke(this, d); // NOTE: Event handlers are executed inside lock!!!
+                    }
 
-                d.LastSeen = currentTimestamp;
-                if (!d.Available)
-                {
-                    d.Available = true;
-                    DeviceAvailable?.Invoke(this, d); // NOTE: Event handlers are executed inside lock!!!
+                    d.LastSeen = currentTimestamp;
+                    if (!d.Available)
+                    {
+                        d.Available = true;
+                        DeviceAvailable?.Invoke(this, d); // NOTE: Event handlers are executed inside lock!!!
+                    }
                 }
-            }
+            });
         }
     }
 }
