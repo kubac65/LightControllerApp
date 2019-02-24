@@ -18,7 +18,7 @@ namespace LightControl.Network
     {
         private readonly int _port;
         private readonly Socket _socket;
-        private IPEndPoint _src;
+        private readonly IPEndPoint _src;
         private bool _listen = false;
         private Thread _worker;
 

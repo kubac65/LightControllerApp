@@ -34,16 +34,16 @@ namespace LightControl
             _ds.DeviceAvailable += Ds_DeviceAvailable;
             _ds.DeviceNotAvailable += Ds_DeviceNotAvailable;
 
-            var deviceListView = FindViewById<ListView>(Resource.Id.device_list);
-            _adapter = new DeviceListAdapter(this, Resource.Id.device_list);
-            deviceListView.Adapter = _adapter;
+            var deviceListView = FindViewById<ExpandableListView>(Resource.Id.device_list);
+            _adapter = new DeviceListAdapter(this);
+            deviceListView.SetAdapter(_adapter);
         }
 
         private void Ds_DeviceDiscovered(object sender, Device device)
         {
             RunOnUiThread(() =>
             {
-                _adapter.Add(device);
+                _adapter.Devices.Add(device);
                 _adapter.NotifyDataSetChanged();
                 Toast.MakeText(this, "Device discovered", ToastLength.Long).Show();
             });
