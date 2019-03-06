@@ -30,17 +30,6 @@ namespace LightControl.Network
             _stream = _client.GetStream();
         }
 
-        public string SendEcho(string msg)
-        {
-            byte[] data = Encoding.ASCII.GetBytes(msg);
-            _stream.Write(data, 0, data.Length);
-
-            byte[] response = new byte[data.Length];
-            int bytesRead = _stream.Read(response, 0, data.Length);
-            string receivedMsg = Encoding.ASCII.GetString(response);
-            return receivedMsg;
-        }
-
         /// <inheritdoc/>
         public void Dispose()
         {

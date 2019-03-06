@@ -11,6 +11,7 @@ namespace LightControl
     using Android.Widget;
     using LightControl.Adapters;
     using LightControl.Network.DeviceManagement;
+    using System.Security;
 
     /// <summary>
     /// Main activity displaying the lsit of discovered devices
