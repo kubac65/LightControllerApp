@@ -88,8 +88,7 @@ namespace LightControl.Network.DeviceManagement
                 {
                     if (!_deviceLookup.TryGetValue(eventArgs.Address, out Device d))
                     {
-                        var mac = new PhysicalAddress(eventArgs.Mac);
-                        d = new Device(eventArgs.Address, DefaultConfiguration.BroadcastPort, mac)
+                        d = new Device(eventArgs.Address, DefaultConfiguration.ConnectionPort, eventArgs.Mac)
                         {
                             Available = true,
                         };

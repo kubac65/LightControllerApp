@@ -8,6 +8,7 @@ namespace LightControl.Network
     using System;
     using System.Linq;
     using System.Net;
+    using System.Net.NetworkInformation;
     using System.Net.Sockets;
     using System.Threading;
 
@@ -57,7 +58,14 @@ namespace LightControl.Network
                             // Read preamble and verify that it's correct
                             byte[] message = new byte[8];
                             _socket.ReceiveFrom(message, SocketFlags.None, ref remoteEndPoint);
-                            byte[] mac = message.Skip(2).ToArray();
+                            if (message[0] != 0xf || message[1] != 0xf)
+                            {
+                                // Preamble incorrect
+                                continue;
+                            }
+
+                            byte[] macBytes = message.Skip(2).ToArray();
+                            PhysicalAddress mac = new PhysicalAddress(macBytes);
                             var eventArgs = new DeviceDiscoveredEventArgs(((IPEndPoint)remoteEndPoint).Address, mac);
                             DeviceDiscovered?.Invoke(this, eventArgs);
                         }

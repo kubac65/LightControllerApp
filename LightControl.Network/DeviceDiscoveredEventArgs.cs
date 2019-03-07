@@ -7,6 +7,7 @@ namespace LightControl.Network
 {
     using System;
     using System.Net;
+    using System.Net.NetworkInformation;
 
     /// <summary>
     /// Event arguments emited by <see cref="DiscoveryService.DeviceDiscovered"/> event.
@@ -18,7 +19,7 @@ namespace LightControl.Network
         /// </summary>
         /// <param name="address">IP address of discovered control device</param>
         /// <param name="mac">MAC address if discovered control device</param>
-        public DeviceDiscoveredEventArgs(IPAddress address, byte[] mac)
+        public DeviceDiscoveredEventArgs(IPAddress address, PhysicalAddress mac)
         {
             Address = address;
             Mac = mac;
@@ -32,6 +33,6 @@ namespace LightControl.Network
         /// <summary>
         /// Gets MAC address if discovered control device
         /// </summary>
-        public byte[] Mac { get; }
+        public PhysicalAddress Mac { get; }
     }
 }
