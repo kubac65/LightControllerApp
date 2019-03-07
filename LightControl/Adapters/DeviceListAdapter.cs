@@ -64,6 +64,14 @@ namespace LightControl.Adapters
         {
             var inflater = _context.LayoutInflater;
             convertView = convertView ?? inflater.Inflate(Resource.Layout.device_controls, null);
+
+            var device = Devices[groupPosition];
+            device.Connect();
+            foreach (var o in device.Outputs)
+            {
+
+            }
+
             return convertView;
         }
 
@@ -91,6 +99,12 @@ namespace LightControl.Adapters
             deviceIp.Text = device.IPAddress.ToString();
             deviceMac.Text = string.Join(":", device.Mac.GetAddressBytes().Select(b => b.ToString("X2")));
             status.Text = device.Available ? "Available" : "Not Available";
+
+            // Disconnect from the device when group gets collapsed
+            if (!isExpanded)
+            {
+                device.Disconnect();
+            }
 
             return convertView;
         }

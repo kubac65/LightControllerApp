@@ -6,6 +6,7 @@
 namespace LightControl.Network.DeviceManagement
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
     using System.Net.NetworkInformation;
 
@@ -14,7 +15,7 @@ namespace LightControl.Network.DeviceManagement
     /// </summary>
     public class Device
     {
-        private readonly int _port;
+        private DeviceClient _client;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Device"/> class.
@@ -25,8 +26,8 @@ namespace LightControl.Network.DeviceManagement
         public Device(IPAddress ipAddress, int port, PhysicalAddress mac)
         {
             IPAddress = ipAddress;
-            _port = port;
             Mac = mac;
+            _client = new DeviceClient(IPAddress, port);
         }
 
         /// <summary>
@@ -50,8 +51,43 @@ namespace LightControl.Network.DeviceManagement
         public bool Available { get; set; }
 
         /// <summary>
-        /// Gets or sets
+        /// Gets or sets device's last seen time.
         /// </summary>
         public DateTime LastSeen { get; set; }
+
+        /// <summary>
+        /// Gets available outputs.
+        /// </summary>
+        public IEnumerable<DeviceOutput> Outputs
+        {
+            get
+            {
+                if (_client.Connected)
+                {
+                    var res = _client.GetAvailableOutputs();
+
+                    for (int i = 0; i < res.Ids.Length; i++)
+                    {
+                        yield return new DeviceOutput(res.Ids[i], res.States[i], _client);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Connects to a device
+        /// </summary>
+        public void Connect()
+        {
+            _client.Connect();
+        }
+
+        /// <summary>
+        /// Disconnects from a device
+        /// </summary>
+        public void Disconnect()
+        {
+            _client.Disconnect();
+        }
     }
 }
