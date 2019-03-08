@@ -67,7 +67,7 @@ namespace LightControl.Network.DeviceManagement
                     foreach (var d in _deviceLookup.Values.Where(d => d.Available))
                     {
                         var diff = currentTimestamp - d.LastSeen;
-                        if (diff > TimeSpan.FromMilliseconds(DefaultConfiguration.DeviceTimeout))
+                        if (diff > TimeSpan.FromMilliseconds(DefaultConfiguration.DeviceTimeout) && !d.Connected)
                         {
                             d.Available = false;
                             DeviceNotAvailable?.Invoke(this, d);

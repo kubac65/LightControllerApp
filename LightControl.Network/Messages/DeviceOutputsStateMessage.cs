@@ -46,7 +46,8 @@ namespace LightControl.Network.Messages
                 throw new Exception(); // TODO add own exception hierarchy
             }
 
-            byte[] payload = bytes.Skip(HeaderLength).ToArray();
+            int payloadLength = GetPayloadLength(bytes);
+            byte[] payload = bytes.Skip(HeaderLength).Take(payloadLength).ToArray();
             List<int> ids = new List<int>();
             List<bool> states = new List<bool>();
             foreach (byte b in payload)
@@ -54,7 +55,7 @@ namespace LightControl.Network.Messages
                 // MSB is used to indicate the state of the output
                 // while remaining 7 bits represent the Id of the output
                 int id = b & 0xef;
-                bool state = (b >> 0) == 1;
+                bool state = (b >> 7) == 1;
 
                 ids.Add(id);
                 states.Add(state);

@@ -75,19 +75,36 @@ namespace LightControl.Network.DeviceManagement
         }
 
         /// <summary>
-        /// Connects to a device
+        /// Gets a value indicating whether device connection is open.
         /// </summary>
-        public void Connect()
+        public bool Connected
         {
-            _client.Connect();
+            get
+            {
+                return _client.Connected;
+            }
         }
 
         /// <summary>
-        /// Disconnects from a device
+        /// Connects to a device.
+        /// </summary>
+        public void Connect()
+        {
+            if (!_client.Connected)
+            {
+                _client.Connect();
+            }
+        }
+
+        /// <summary>
+        /// Disconnects from a device.
         /// </summary>
         public void Disconnect()
         {
-            _client.Disconnect();
+            if (_client.Connected)
+            {
+                _client.Disconnect();
+            }
         }
     }
 }

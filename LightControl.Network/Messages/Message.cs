@@ -62,8 +62,8 @@ namespace LightControl.Network.Messages
             bytes[1] = (byte)Flags;
 
             // Get payload length
-            bytes[2] = (byte)Payload.Length;
-            bytes[3] = (byte)(Payload.Length >> 8);
+            bytes[2] = (byte)(Payload.Length >> 8);
+            bytes[3] = (byte)Payload.Length;
 
             // Append payload
             for (int i = HeaderLength; i < packetSize; i++)
@@ -95,12 +95,14 @@ namespace LightControl.Network.Messages
         }
 
         /// <summary>
-        /// Gets payload to that will be included in the message
+        /// Extracts payload length from received message
         /// </summary>
-        /// <returns>Serialized payload</returns>
-        protected virtual byte[] GetPayload()
+        /// <param name="bytes">Received message</param>
+        /// <returns>Count of bytes in payload</returns>
+        protected static int GetPayloadLength(byte[] bytes)
         {
-            return new byte[0];
+            int length = bytes[3] | bytes[2] << 8;
+            return length;
         }
     }
 }

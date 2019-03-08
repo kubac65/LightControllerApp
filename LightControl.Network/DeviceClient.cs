@@ -17,8 +17,8 @@ namespace LightControl.Network
     {
         private readonly IPAddress _address;
         private readonly int _port;
-        private readonly TcpClient _client;
 
+        private TcpClient _client = new TcpClient();
         private NetworkStream _stream;
 
         /// <summary>
@@ -30,19 +30,21 @@ namespace LightControl.Network
         {
             _address = address;
             _port = port;
-            _client = new TcpClient();
         }
 
         public bool Connected => _client.Connected;
 
         public void Connect()
         {
-            _client.Connect(new IPEndPoint(_address, _port));
+            _client = new TcpClient();
+           _client.Connect(new IPEndPoint(_address, _port));
             _stream = _client.GetStream();
         }
 
         public void Disconnect()
         {
+            _stream.Close();
+            _client.Close();
         }
 
         public DeviceOutputsStateMessage GetAvailableOutputs()
@@ -60,8 +62,7 @@ namespace LightControl.Network
         /// <inheritdoc/>
         public void Dispose()
         {
-            _stream.Close();
-            _client.Close();
+            Disconnect();
         }
 
         private byte[] SendMessage(Message request)
@@ -73,6 +74,7 @@ namespace LightControl.Network
             int bufferSize = Message.HeaderLength + Message.MaxPayloadLength;
             byte[] responseBuffer = new byte[bufferSize];
             _stream.Read(responseBuffer, 0, bufferSize);
+            _stream.Flush();
             return responseBuffer;
         }
     }

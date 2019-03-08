@@ -66,7 +66,6 @@ namespace LightControl.Adapters
             convertView = convertView ?? inflater.Inflate(Resource.Layout.device_controls, null);
 
             var device = Devices[groupPosition];
-            device.Connect();
             foreach (var o in device.Outputs)
             {
 
@@ -101,7 +100,11 @@ namespace LightControl.Adapters
             status.Text = device.Available ? "Available" : "Not Available";
 
             // Disconnect from the device when group gets collapsed
-            if (!isExpanded)
+            if (isExpanded)
+            {
+                device.Connect();
+            }
+            else if (!isExpanded)
             {
                 device.Disconnect();
             }

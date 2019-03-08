@@ -58,7 +58,7 @@ namespace LightControl.Network
                             // Read preamble and verify that it's correct
                             byte[] message = new byte[8];
                             _socket.ReceiveFrom(message, SocketFlags.None, ref remoteEndPoint);
-                            if (message[0] != 0xf || message[1] != 0xf)
+                            if (message[0] != 0xff || message[1] != 0xff)
                             {
                                 // Preamble incorrect
                                 continue;
