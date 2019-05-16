@@ -26,11 +26,10 @@ namespace LightControl.Network.Messages
                 (byte)Id
             };
 
-            int p = Id;
             if (state)
             {
                 // Toggle state bit
-                Payload[0] |= 0xf0;
+                Payload[0] |= 0x80;
             }
         }
 
