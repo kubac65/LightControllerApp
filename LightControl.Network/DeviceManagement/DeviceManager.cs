@@ -55,6 +55,11 @@ namespace LightControl.Network.DeviceManagement
         {
             _discoveryService.Stop();
             _deviceWatchdog.Stop();
+
+            foreach (var device in _deviceLookup.Values)
+            {
+                device.Disconnect();
+            }
         }
 
         private void DeviceWatchdog_Elapsed(object sender, ElapsedEventArgs e)
