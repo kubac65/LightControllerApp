@@ -63,12 +63,24 @@ namespace LightControl.Adapters
         public override View GetChildView(int groupPosition, int childPosition, bool isLastChild, View convertView, ViewGroup parent)
         {
             var inflater = _context.LayoutInflater;
-            convertView = convertView ?? inflater.Inflate(Resource.Layout.device_controls, null);
 
+            // Don't reuse convertView as the number of outputs might have changed, instead create new one
+            convertView = inflater.Inflate(Resource.Layout.device_controls, null);
+            var layout = convertView.FindViewById<LinearLayout>(Resource.Id.device_controls);
             var device = Devices[groupPosition];
             foreach (var o in device.Outputs)
             {
-
+                var outputSwitchView = inflater.Inflate(Resource.Layout.output_switch, null);
+                var outputName = outputSwitchView.FindViewById<TextView>(Resource.Id.output_name);
+                var outputToggle = outputSwitchView.FindViewById<Switch>(Resource.Id.output_toggle);
+                outputName.Text = o.Id.ToString();
+                outputName.LabelFor = Resource.Id.output_toggle;
+                outputToggle.Checked = o.IsOn;
+                outputToggle.CheckedChange += (sender, e) =>
+                {
+                    o.IsOn = e.IsChecked;
+                };
+                layout.AddView(outputSwitchView);
             }
 
             return convertView;

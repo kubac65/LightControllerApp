@@ -54,7 +54,7 @@ namespace LightControl.Network.Messages
             {
                 // MSB is used to indicate the state of the output
                 // while remaining 7 bits represent the Id of the output
-                int id = b & 0xef;
+                int id = b & 0x7f;
                 bool state = (b >> 7) == 1;
 
                 ids.Add(id);

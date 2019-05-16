@@ -59,7 +59,7 @@ namespace LightControl.Network.DeviceManagement
 
         private void DeviceWatchdog_Elapsed(object sender, ElapsedEventArgs e)
         {
-            var currentTimestamp = DateTime.Now;
+            var currentTimestamp = DateTime.UtcNow;
             Task.Factory.StartNew(() =>
             {
                 lock (_deviceLookup)
